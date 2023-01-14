@@ -21,12 +21,21 @@ for (var i = 0; i < ball.frames_max; i++) {
     ball.frames[i].src = "res/ball_" + i + ".png";
 }
 
+function image_smoothing(boolean) {
+    ctx.mozImageSmoothingEnabled = boolean;
+    ctx.oImageSmoothingEnabled = boolean;
+    ctx.webkitImageSmoothingEnabled = boolean;
+    ctx.msImageSmoothingEnabled = boolean;
+    ctx.imageSmoothingEnabled = boolean;
+}
+
 function loop() {
     window.requestAnimationFrame(loop, ctx);
     delta.current = (new Date()).getTime();
     delta.time = (delta.current - delta.last) / delta.interval;
-    ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
+    image_smoothing(false);
+    ctx.canvas.width = window.innerWidth * window.devicePixelRatio;
+    ctx.canvas.height = window.innerHeight * window.devicePixelRatio;
     var ball_frame = ball.frames[Math.floor(ball.frames_current) + ball.frames_min];
     ctx.fillStyle = "#ffffff";
     ctx.font = "32px Arial";
@@ -34,9 +43,18 @@ function loop() {
         ctx.fillText("Ball frame: " + (Math.floor(ball.frames_current) + ball.frames_min), 0, 32);
         ctx.fillText("Ball speed: " + (ball.speed), 0, 32 * 2);
     }
+    var scale = 180;
+    if ((ctx.canvas.width / scale) * ball_frame.width >= ctx.canvas.width)
+        scale = (ctx.canvas.height / scale);
+    else if ((ctx.canvas.height / scale) * ball_frame.height >= ctx.canvas.height)
+        scale = (ctx.canvas.width / scale);
+    else
+        scale = (ctx.canvas.height / scale);
     ctx.drawImage(ball_frame,
-        (ctx.canvas.width - ball_frame.width) / 2,
-        (ctx.canvas.height - ball_frame.height) / 2);
+        (ctx.canvas.width - (scale * ball_frame.width)) / 2,
+        (ctx.canvas.height - (scale * ball_frame.height)) / 2,
+        scale * ball_frame.width,
+        scale * ball_frame.height);
     ball.frames_current = (ball.frames_current + (delta.time * ball.speed)) % (ball.frames_max - ball.frames_min);
     ball.speed += delta.time * 0.00055555;
     delta.last = delta.current;
