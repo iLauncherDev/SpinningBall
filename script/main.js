@@ -1,4 +1,9 @@
 var ctx = document.getElementById("game").getContext("2d", { alpha: false, });
+
+window.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+}, false);
+
 var ball = {
     frames: [],
     frames_current: 0,
