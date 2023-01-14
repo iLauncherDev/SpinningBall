@@ -33,9 +33,9 @@ function loop() {
     window.requestAnimationFrame(loop, ctx);
     delta.current = (new Date()).getTime();
     delta.time = (delta.current - delta.last) / delta.interval;
-    image_smoothing(false);
     ctx.canvas.width = window.innerWidth * window.devicePixelRatio;
     ctx.canvas.height = window.innerHeight * window.devicePixelRatio;
+    image_smoothing(false);
     var ball_frame = ball.frames[Math.floor(ball.frames_current) + ball.frames_min];
     ctx.fillStyle = "#ffffff";
     ctx.font = "32px Arial";
@@ -43,13 +43,7 @@ function loop() {
         ctx.fillText("Ball frame: " + (Math.floor(ball.frames_current) + ball.frames_min), 0, 32);
         ctx.fillText("Ball speed: " + (ball.speed), 0, 32 * 2);
     }
-    var scale = 180;
-    if ((ctx.canvas.width / scale) * ball_frame.width >= ctx.canvas.width)
-        scale = (ctx.canvas.height / scale);
-    else if ((ctx.canvas.height / scale) * ball_frame.height >= ctx.canvas.height)
-        scale = (ctx.canvas.width / scale);
-    else
-        scale = (ctx.canvas.height / scale);
+    var scale = Math.min(ctx.canvas.width / 180, ctx.canvas.height / 180);
     ctx.drawImage(ball_frame,
         (ctx.canvas.width - (scale * ball_frame.width)) / 2,
         (ctx.canvas.height - (scale * ball_frame.height)) / 2,
